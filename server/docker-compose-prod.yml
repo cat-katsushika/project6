@@ -1,0 +1,61 @@
+services:
+
+# データベース用のコンテナ
+  postgres:
+    image: postgres:14
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - webnet
+  
+  django-blue:
+    build:
+      context: ./django
+      dockerfile: Dockerfile.django.prod
+    environment:
+      - DJANGO_ENV_COLOR=blue
+    env_file:
+      - .env
+    ports:
+      - 8000:8000
+    # volumes: 
+    #   - ./django:/django これをすると，現在動いているやつで使用していないモジュールを使ったものとかをgit pullすると，現在動いてるのがblueもgreenも落ちる
+    volumes:
+      - ./django/static:/django/static # nginxと連携するために，staticはマウントする
+      - ./django/media:/django/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - webnet
+  
+  django-green:
+    build:
+      context: ./django
+      dockerfile: Dockerfile.django.prod
+    environment:
+      - DJANGO_ENV_COLOR=green
+    env_file:
+      - .env
+    ports:
+      - 8001:8000
+    volumes:
+      - ./django/static:/django/static
+      - ./django/media:/django/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge

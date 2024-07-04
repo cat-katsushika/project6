@@ -1,0 +1,20 @@
+<!-- templates/video_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video List</title>
+</head>
+<body>
+    <h2>Video List</h2>
+    {% for video in videos %}
+        <div>
+            <video width="300" height="200" controls>
+                <source src="{{ video.video_file.url }}" type="video/webm">
+                Your browser does not support the video tag.
+            </video>
+            <p>{{ video.user.username }} - {{ video.uploaded_at }}</p>
+        </div>
+    {% endfor %}
+</body>
+</html>
