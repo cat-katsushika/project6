@@ -25,7 +25,7 @@ services:
     env_file:
       - .env
     ports:
-      - 8000:8000
+      - 8002:8000
     # volumes: 
     #   - ./django:/django これをすると，現在動いているやつで使用していないモジュールを使ったものとかをgit pullすると，現在動いてるのがblueもgreenも落ちる
     volumes:
@@ -46,7 +46,7 @@ services:
     env_file:
       - .env
     ports:
-      - 8001:8000
+      - 8003:8000
     volumes:
       - ./django/static:/django/static
       - ./django/media:/django/media
