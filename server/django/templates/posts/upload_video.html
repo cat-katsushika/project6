@@ -116,8 +116,7 @@
         try {
             displayStream = await navigator.mediaDevices.getUserMedia({
                 video: {
-                    deviceId: { exact: cameraId },
-                    aspectRatio: 1
+                    deviceId: { exact: cameraId }
                 },
                 audio: false
             });
@@ -142,7 +141,7 @@
                 });
             } else {
                 console.error('Error starting stream:', error);
-                alert('ストリームの開始中にエラーが発生しました。');
+                alert('ストリームの開始中にエラーが発生しました。エラー詳細: ' + error.message);
             }
         }
     }
@@ -154,8 +153,7 @@
         try {
             recordStream = await navigator.mediaDevices.getUserMedia({
                 video: {
-                    deviceId: { exact: cameraId },
-                    aspectRatio: 1
+                    deviceId: { exact: cameraId }
                 },
                 audio: {
                     deviceId: { exact: audioId }
@@ -327,7 +325,7 @@
                 }
             } else {
                 console.error('録画の開始中にエラーが発生しました:', error);
-                alert('録画の開始中にエラーが発生しました。デバイスの設定を確認してください。');
+                alert('録画の開始中にエラーが発生しました。エラー詳細: ' + error.message);
             }
         }
     }
