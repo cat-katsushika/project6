@@ -78,7 +78,7 @@ delete:
 
 .PHONY: prod-build
 prod-build:
-	docker compose -f docker-compose-prod.yml build
+	docker compose -f docker-compose-prod.yml build --no-cache
 
 .PHONY: prod-up-d
 prod-up-d:
