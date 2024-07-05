@@ -14,7 +14,7 @@
     }
     #currentCameraVideo, #recordedVideo {
         width: 300px;
-        height: 169px;
+        height: 300px;
         object-fit: cover;
     }
 </style>
@@ -117,8 +117,6 @@
             displayStream = await navigator.mediaDevices.getUserMedia({
                 video: {
                     deviceId: { exact: cameraId },
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 },
                     aspectRatio: 1
                 },
                 audio: false
@@ -130,14 +128,10 @@
                 console.log(`${track.kind} track:`, track);
             });
         } catch (error) {
-            if (error.name === 'OverconstrainedError') {
+            if (error.name === 'OverconstrainedError' || error.name === 'NotFoundError') {
                 console.warn('指定されたデバイスが利用できません。デフォルトのデバイスを使用します。');
                 displayStream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 },
-                        aspectRatio: 1
-                    },
+                    video: true,
                     audio: false
                 });
                 currentCameraVideo.srcObject = displayStream;
@@ -161,8 +155,6 @@
             recordStream = await navigator.mediaDevices.getUserMedia({
                 video: {
                     deviceId: { exact: cameraId },
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 },
                     aspectRatio: 1
                 },
                 audio: {
@@ -246,15 +238,11 @@
             };
             setTimeout(stopRecording, duration);
         } catch (error) {
-            if (error.name === 'OverconstrainedError') {
+            if (error.name === 'OverconstrainedError' || error.name === 'NotFoundError') {
                 console.warn('指定された制約が満たされません。デフォルトのデバイスを使用します。');
                 try {
                     recordStream = await navigator.mediaDevices.getUserMedia({
-                        video: {
-                            width: { ideal: 1280 },
-                            height: { ideal: 720 },
-                            aspectRatio: 1
-                        },
+                        video: true,
                         audio: true
                     });
 
