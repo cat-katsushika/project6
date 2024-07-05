@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+【orton】
+{% endblock title %}s
+
+{% block content %}
+    <h2>{{ user.username }}さんのページ</h2>
+    <a
+        href="{% url 'posts:upload_video'%}"
+    >
+        動画撮影
+    </a>
+    {% for video in videos %}
+        <div>
+            <video width="300" height="169" controls>
+                <source src="{{ video.video_file.url }}" type="video/webm">
+                Your browser does not support the video tag.
+            </video>
+            <p>{{ video.user.username }} - {{ video.uploaded_at }}</p>
+        </div>
+    {% endfor %}
+{% endblock content %}
+

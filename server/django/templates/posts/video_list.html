@@ -1,11 +1,12 @@
-<!-- templates/video_list.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Video List</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+【orton】
+{% endblock title %}s
+
+{% block content %}
     <h2>Video List</h2>
     {% for video in videos %}
         <div>
@@ -16,5 +17,5 @@
             <p>{{ video.user.username }} - {{ video.uploaded_at }}</p>
         </div>
     {% endfor %}
-</body>
-</html>
+{% endblock content %}
+

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+【orton】
+{% endblock title %}s
+
+{% block content %}
+<h2>ようこそ</h2>
+<a
+    href="{% url 'posts:upload_video'%}"
+>
+    動画撮影
+</a>
+<a
+href="{% url 'posts:video_list'%}"
+>
+    動画一覧
+</a>
+<a
+href="{% url 'posts:video_map'%}"
+>
+地図
+</a>
+<a
+href="{% url 'posts:video_map_api'%}"
+>
+地図API
+</a>
+{% endblock content %}

@@ -1,35 +1,35 @@
-# posts/models.py
+import os
+import uuid
+
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
+from django.utils.deconstruct import deconstructible
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.png')
 
-    def __str__(self):
-        return self.user.username
-    
-# posts/models.py
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+@deconstructible
+class PathAndRename:
+    def __init__(self, sub_path):
+        self.sub_path = sub_path
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
+    def __call__(self, instance, filename):
+        ext = filename.split(".")[-1]
+        filename = "{}.{}".format(instance.id, ext)
+        return os.path.join(self.sub_path, filename)
 
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+
+# 動画用のパスを指定します
+video_upload_path = PathAndRename("videos/")
+thumbnail_upload_path = PathAndRename("thumbnails/")
 
 
 class Video(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    video_file = models.FileField(upload_to='videos/')
-    thumbnail_file = models.ImageField(upload_to='thumbnails/')
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    video_file = models.FileField(upload_to=video_upload_path)
+    thumbnail_file = models.ImageField(upload_to=thumbnail_upload_path)
     latitude = models.FloatField()
     longitude = models.FloatField()
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user.username} - {self.uploaded_at}'
+        return f"{self.user.username} - {self.uploaded_at}"
