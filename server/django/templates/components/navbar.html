@@ -2,7 +2,7 @@
 
 <nav class="navbar navbar-expand flex-md-row navbar-dark bg-dark fixed-top">
     <div class="container justify-content-between">
-        <a href="{% url 'users:home' %}" class="navbar-brand">orton</a>
+        <a href="{% url 'users:home' %}" class="navbar-brand">Librite</a>
         <ul class="navbar-nav mr-md-2">
             {% if request.user.is_authenticated %}
             <li class="nav-item"><a class="nav-link" href="{% url 'users:profile' request.user.id %}">{{ request.user.username }}</a></li>

@@ -35,9 +35,9 @@ AUTH_USER_MODEL = "users.User"
 SECRET_KEY = "django-insecure-yl-j)u5a+ae_+e!-2y5u#9ttx_@rpd#j$n$)()@12-$id^7!!r"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DJANGO_DEBUG", default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[])
 
 
 # Application definition
@@ -140,7 +140,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = env.str("DJANGO_STATIC_URL", default="static/")
+STATIC_ROOT = env.str("DJANGO_STATIC_ROOT", default=BASE_DIR / "static")
+
+MEDIA_URL = env.str("DJANGO_MEDIA_URL", default="media/")
+MEDIA_ROOT = env.str("DJANGO_MEDIA_ROOT", default=BASE_DIR / "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -151,5 +155,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+
+REGULAR_EXECUTION_TOKEN = env("REGULAR_EXECUTION_TOKEN")
