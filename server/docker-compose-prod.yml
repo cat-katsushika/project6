@@ -14,7 +14,7 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - webnet
+      - project6-webnet
   
   django-blue:
     build:
@@ -35,7 +35,7 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - webnet
+      - project6-webnet
   
   django-green:
     build:
@@ -54,8 +54,8 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - webnet
+      - project6-webnet
 
 networks:
-  webnet:
+  project6-webnet:
     driver: bridge
