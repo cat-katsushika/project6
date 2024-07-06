@@ -82,6 +82,9 @@
             uploadButton.addEventListener('click', () => {
                 if (!videoFileInput.files.length > 0  && !thumbnailFileInput.files.length > 0 && !latitudeInput.value && !longitudeInput.value) {
                     uploadForm.submit();
+                } else {
+                    logText.textContent += 'アップロードボタンが押されましたが，動画、サムネイル、位置情報のいずれかが取得できていません。もう一度録画してください。';
+                    alert('動画、サムネイル、位置情報のいずれかが取得できていません。もう一度録画してください。');
                 }
             })
 
@@ -120,22 +123,32 @@
                 // 現在地を取得
                 getCurrentPosition()
 
+                logText.textContent += '現在地を取得しました。'
+
                 const videoBlob = new Blob([event.data], { type: 'video/mp4' });
                 const videoURL = URL.createObjectURL(videoBlob);
                 
                 // 録画した動画を表示
                 videoRecorded.src = videoURL;
 
+                logText.textContent += '録画した動画を表示しました。'
+
                 // Create a thumbnail
                 const thumbnailBlob = await createThumbnail(videoURL);
+
+                logText.textContent += 'サムネイルを生成しました。'
                 
                 // Create files for form submission
                 const videoFile = new File([videoBlob], 'recordedVideo.mp4', { type: 'video/mp4' });
                 const thumbnailFile = new File([thumbnailBlob], 'thumbnail.png', { type: 'image/png' });
                 
+                logText.textContent += 'ファイルを生成しました。'
+
                 // formにファイルをセット
                 setFileInput(videoFileInput, videoFile);
                 setFileInput(thumbnailFileInput, thumbnailFile);
+
+                logText.textContent += 'ファイルをセットしました。'
 
                 // アップロードボタンを有効化
                 if (videoFileInput.files.length > 0 && thumbnailFileInput.files.length > 0 && latitudeInput.value && longitudeInput.value) {
@@ -145,6 +158,8 @@
                     logText.textContent += '動画、サムネイル、位置情報のいずれかが取得できていません。もう一度録画してください。';
                     alert('動画、サムネイル、位置情報のいずれかが取得できていません。もう一度録画してください。');
                 }
+
+                logText.textContent += 'アップロードボタンを有効化しました。'
 
             })
         }
