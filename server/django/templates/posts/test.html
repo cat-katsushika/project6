@@ -159,8 +159,8 @@
                 logText.textContent += 'サムネイルを生成します。'
 
                 try {
-                    thumbnailCanvas.width = recordedVideo.videoWidth;
-                    thumbnailCanvas.height = recordedVideo.videoHeight;
+                    thumbnailCanvas.width = videoRecorded.videoWidth;
+                    thumbnailCanvas.height = videoRecorded.videoHeight;
                 } catch (error) {
                     logText.textContent += 'キャンバスのサイズを設定できませんでした。' + error;
                 }
@@ -168,7 +168,7 @@
                 logText.textContent += 'キャンバスのサイズを設定しました'
 
                 try {
-                    thumbnailContext.drawImage(recordedVideo, 0, 0, recordedVideo.videoWidth, recordedVideo.videoHeight);
+                    thumbnailContext.drawImage(videoRecorded, 0, 0, videoRecorded.videoWidth, videoRecorded.videoHeight);
                 } catch (error) {
                     logText.textContent += 'イメージを描画できませんでした。' + error;
                 }
@@ -182,7 +182,7 @@
                 logText.textContent += 'イメージを描画しました。'
 
                 
-                thumbnailBlob = thumbnailCanvas.toBlob();
+                const thumbnailBlob = thumbnailCanvas.toBlob();
 
                 logText.textContent += 'サムネイルBlobを生成しました。'
                 
