@@ -5,6 +5,7 @@ from django.http import JsonResponse
 # posts/views.py
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import VideoForm
 from .models import Video
@@ -45,7 +46,7 @@ def video_detail(request, video_id):
     return render(request, "posts/video_detail.html", {"video": video})
 
 
-class UploadVideoView(TemplateView):
+class UploadVideoView(LoginRequiredMixin, TemplateView):
     template_name = "posts/upload_video.html"
 
     def get_context_data(self, **kwargs):
