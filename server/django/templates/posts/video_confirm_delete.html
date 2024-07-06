@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+【Librite】
+{% endblock title %}
+
+{% block content %}
+<h1>投稿削除画面です</h1>
+【投稿者】{{object.user}}
+【投稿日時】{{object.uploaded_at}}
+【動画】
+<video style="width: 100%;" controls poster="{{ object.thumbnail_file.url }}">
+    <source src="{{ object.video_file.url }}" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="削除します">
+</form>
+
+{% endblock content %}
+

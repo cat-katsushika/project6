@@ -7,6 +7,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.urls import reverse
+from django.core.exceptions import PermissionDenied
+from django.views.generic.edit import DeleteView
 from .forms import VideoForm
 from .models import Video
 
@@ -85,3 +88,16 @@ class UploadVideoView(LoginRequiredMixin, TemplateView):
         return self.render_to_response(context)
     
 
+
+class DeleteVideoView(LoginRequiredMixin, DeleteView):
+    model = Video
+    template_name = "posts/video_confirm_delete.html"
+    
+    def get_success_url(self):
+        return reverse("users:profile", kwargs={"user_id": self.request.user.id})
+
+    def get_object(self, queryset=None):
+        video = super().get_object()
+        if video.user != self.request.user:
+            raise PermissionDenied
+        return video

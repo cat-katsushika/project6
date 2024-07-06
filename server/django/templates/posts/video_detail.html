@@ -13,6 +13,12 @@
         <source src="{{ video.video_file.url }}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
+
+    <a href="{% url 'posts:delete_video' video.id %}">Delete Video</a>
+
     <p><a href="{% url 'posts:video_map' %}">Back to Map</a></p>
+
+    <a href="{% url 'posts:video_list' %}">Back to Video List</a>
+
 {% endblock content %}
 
