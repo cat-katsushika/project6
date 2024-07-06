@@ -182,10 +182,16 @@
                 logText.textContent += 'イメージを描画しました。'
 
                 try {
-                    const thumbnailBlob = thumbnailCanvas.toBlob();
-                } catch (error) {
+                const thumbnailBlob = await canvasToBlob(thumbnailCanvas);
+                }
+                catch (error) {
                     logText.textContent += 'サムネイルBlobを生成できませんでした。' + error;
                 }
+                // try {
+                //     const thumbnailBlob = thumbnailCanvas.toBlob();
+                // } catch (error) {
+                //     logText.textContent += 'サムネイルBlobを生成できませんでした。' + error;
+                // }
 
                 logText.textContent += 'サムネイルBlobを生成しました。'
                 
@@ -202,12 +208,12 @@
                 // formにファイルをセット
 
                 try {
-                setFileInput(videoFileInput, videoFile);
-                setFileInput(thumbnailFileInput, thumbnailFile);
+                    setFileInput(videoFileInput, videoFile);
+                    setFileInput(thumbnailFileInput, thumbnailFile);
                 } catch (error) {
                     logText.textContent += 'ファイルをセットできませんでした。' + error;
                 }
-                
+
                 logText.textContent += 'ファイルをセットしました。'
 
                 // アップロードボタンを有効化
@@ -229,6 +235,15 @@
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
             fileInput.files = dataTransfer.files;
+        }
+
+        // canvasをBlobに変換する関数
+        function canvasToBlob(canvas, type = 'image/png') {
+            return new Promise((resolve) => {
+                canvas.toBlob((blob) => {
+                    resolve(blob);
+                }, type);
+            });
         }
 
         // サムネイルを生成する関数
