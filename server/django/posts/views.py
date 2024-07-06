@@ -10,33 +10,6 @@ from .forms import VideoForm
 from .models import Video
 
 
-@login_required
-def upload_video(request):
-    if request.method == "POST":
-        latitude = request.POST.get("latitude")
-        longitude = request.POST.get("longitude")
-        video_file = request.FILES.get("video_file")
-        thumbnail_file = request.FILES.get("thumbnail_file")
-
-        if not latitude or not longitude or not video_file or not thumbnail_file:
-            return render(
-                request, "posts/upload_video.html", {"form": VideoForm(), "error": "位置情報、動画ファイル、サムネイルファイルの全てが必要です。"}
-            )
-
-        video_form = VideoForm(request.POST, request.FILES)
-        if video_form.is_valid():
-            video = video_form.save(commit=False)
-            video.user = request.user
-            video.latitude = float(latitude)
-            video.longitude = float(longitude)
-            video.video_file = video_file
-            video.thumbnail_file = thumbnail_file
-            video.save()
-            return redirect("users:profile", user_id=request.user.id)
-    else:
-        video_form = VideoForm()
-    return render(request, "posts/upload_video.html", {"form": video_form})
-
 
 def video_list(request):
     videos = Video.objects.all().order_by("-uploaded_at")
@@ -72,8 +45,8 @@ def video_detail(request, video_id):
     return render(request, "posts/video_detail.html", {"video": video})
 
 
-class TestView(TemplateView):
-    template_name = "posts/test.html"
+class UploadVideoView(TemplateView):
+    template_name = "posts/upload_video.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
