@@ -172,21 +172,17 @@
                 } catch (error) {
                     logText.textContent += 'イメージを描画できませんでした。' + error;
                 }
-                // thumbnailCanvas.toBlob((blob) => {
-                //                 const thumbnailFile = new File([blob], 'thumbnail.png', { type: 'image/png' });
-                //                 const thumbnailDataTransfer = new DataTransfer();
-                //                 thumbnailDataTransfer.items.add(thumbnailFile);
-                //                 thumbnailFileInput.files = thumbnailDataTransfer.files;
-                //             });
 
                 logText.textContent += 'イメージを描画しました。'
 
+                
                 try {
-                const thumbnailBlob = await canvasToBlob(thumbnailCanvas);
-                }
-                catch (error) {
+                    const thumbnailBlob = thumbnailCanvas.toBlob();
+                } catch (error) {
                     logText.textContent += 'サムネイルBlobを生成できませんでした。' + error;
                 }
+                
+                const thumbnailBlob = await canvasToBlob(thumbnailCanvas);
                 // try {
                 //     const thumbnailBlob = thumbnailCanvas.toBlob();
                 // } catch (error) {
@@ -202,6 +198,12 @@
                 } catch (error) {
                     logText.textContent += 'ファイルを生成できませんでした。' + error;
                 }
+                
+                // try-catchはブロック内で完結しているため再度実行
+                const videoFile = new File([videoBlob], 'recordedVideo.mp4', { type: 'video/mp4' });
+                const thumbnailFile = new File([thumbnailBlob], 'thumbnail.png', { type: 'image/png' });
+
+
 
                 logText.textContent += 'ファイルを生成しました。'
 
