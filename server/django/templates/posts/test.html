@@ -190,6 +190,8 @@
                 
                 // 録画した動画を表示
                 videoRecorded.src = videoURL;
+                videoRecorded.controls = true;
+                videoRecorded.play();
 
                 logText.textContent += '録画した動画を表示しました。'
 
