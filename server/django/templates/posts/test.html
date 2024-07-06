@@ -87,12 +87,7 @@
 
             // uploadButtonを押したときの処理
             uploadButton.addEventListener('click', () => {
-                if (!videoFileInput.files.length > 0  && !thumbnailFileInput.files.length > 0 && !latitudeInput.value && !longitudeInput.value) {
-                    uploadForm.submit();
-                } else {
-                    logText.textContent += 'アップロードボタンが押されましたが，動画、サムネイル、位置情報のいずれかが取得できていません。もう一度録画してください。';
-                    alert('動画、サムネイル、位置情報のいずれかが取得できていません。もう一度録画してください。');
-                }
+                uploadForm.submit();
             })
 
             // 録画した動画をロードする際にサムネイルを生成
