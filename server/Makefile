@@ -96,6 +96,11 @@ proddown:
 
 .PHONY: prodblueup
 prodblueup:
+	docker compose -f docker-compose-prod.yml up -d --no-deps --build django-blue
+
+
+.PHONY: prodblueup-nc
+prodblueup-nc:
 	docker compose -f docker-compose-prod.yml build --no-cache django-blue
 	docker compose -f docker-compose-prod.yml up -d --no-deps django-blue
 
