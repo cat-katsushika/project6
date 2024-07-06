@@ -96,17 +96,17 @@
             })
 
             // 録画した動画をロードする際にサムネイルを生成
-            videoRecorded.addEventListener('loadeddata', () => {
-                thumbnailCanvas.width = recordedVideo.videoWidth;
-                thumbnailCanvas.height = recordedVideo.videoHeight;
-                thumbnailContext.drawImage(recordedVideo, 0, 0, recordedVideo.videoWidth, recordedVideo.videoHeight);
-                thumbnailCanvas.toBlob((blob) => {
-                                const thumbnailFile = new File([blob], 'thumbnail.png', { type: 'image/png' });
-                                const thumbnailDataTransfer = new DataTransfer();
-                                thumbnailDataTransfer.items.add(thumbnailFile);
-                                thumbnailFileInput.files = thumbnailDataTransfer.files;
-                            });
-            })
+            // videoRecorded.addEventListener('loadeddata', () => {
+            //     thumbnailCanvas.width = recordedVideo.videoWidth;
+            //     thumbnailCanvas.height = recordedVideo.videoHeight;
+            //     thumbnailContext.drawImage(recordedVideo, 0, 0, recordedVideo.videoWidth, recordedVideo.videoHeight);
+            //     thumbnailCanvas.toBlob((blob) => {
+            //                     const thumbnailFile = new File([blob], 'thumbnail.png', { type: 'image/png' });
+            //                     const thumbnailDataTransfer = new DataTransfer();
+            //                     thumbnailDataTransfer.items.add(thumbnailFile);
+            //                     thumbnailFileInput.files = thumbnailDataTransfer.files;
+            //                 });
+            // })
 
             // 録画ボタンを押したときの処理
             buttonStart.addEventListener('click', () => {
@@ -158,6 +158,9 @@
 
                 thumbnailCanvas.width = recordedVideo.videoWidth;
                 thumbnailCanvas.height = recordedVideo.videoHeight;
+
+                logText.textContent += 'キャンバスのサイズを設定しました'
+
                 thumbnailContext.drawImage(recordedVideo, 0, 0, recordedVideo.videoWidth, recordedVideo.videoHeight);
                 // thumbnailCanvas.toBlob((blob) => {
                 //                 const thumbnailFile = new File([blob], 'thumbnail.png', { type: 'image/png' });
@@ -165,6 +168,9 @@
                 //                 thumbnailDataTransfer.items.add(thumbnailFile);
                 //                 thumbnailFileInput.files = thumbnailDataTransfer.files;
                 //             });
+
+                logText.textContent += 'イメージを描画しました。'
+                
                 thumbnailBlob = thumbnailCanvas.toBlob();
 
                 logText.textContent += 'サムネイルBlobを生成しました。'
