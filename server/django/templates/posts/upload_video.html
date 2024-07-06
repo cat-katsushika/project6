@@ -8,15 +8,18 @@
 
 {% block content %}
     <div>
-        <button type="button" id="buttonStart" style="width: 300px; height: 100px;">Start</button>
-        <!-- <button type="button" id="buttonStop" style="width: 300px; height: 100px;" disabled>Stop</button> -->
         <div id="logText"></div>
     </div>
     <div>
-        <video autoplay muted playsinline id="videoLive" style="width: 300px; height: 300px;"></video>
+        <video autoplay muted playsinline id="videoLive" style="width: 100%; aspect-ratio: 1 / 1;"></video>
     </div>
+
+    
+    <button type="button" id="buttonStart" style="width: 100%; height: 100px;">動画を撮影する</button>
+
+    <div>撮影した動画↓ 投稿ボタンは下部</div>
     <div>
-        <video controls playsinline id="videoRecorded" style="width: 300px; height: 300px;"></video>
+        <video controls playsinline id="videoRecorded" style="width: 100%; aspect-ratio: 1 / 1;"></video>
     </div>
 
     <form id="uploadForm" method="post" enctype="multipart/form-data">
@@ -28,7 +31,7 @@
         <input type="text" id="latitude" name="latitude" style="display:none;">
         <input type="text" id="longitude" name="longitude" style="display:none;">
         <!-- アップロードボタン（初期状態では無効化） -->
-        <button type="button" id="uploadButton" style="width: 300px; height: 100px;" disabled>Upload Video</button>
+        <button type="button" id="uploadButton" style="width: 100%; height: 100px;" disabled>投稿する</button>
     </form>
 
     <!-- サムネイル生成用のcanvas（非表示） -->
