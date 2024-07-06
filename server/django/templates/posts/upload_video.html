@@ -125,6 +125,16 @@
                 buttonStart.setAttribute('disabled', '')
                 logText.textContent += 'start recording'
 
+                buttonStart.innerHTML = '録画中... 3秒後に停止します'
+
+                setTimeout(() => {
+                    buttonStart.innerHTML = '録画中... 2秒後に停止します'
+                }, 1000)
+
+                setTimeout(() => {
+                    buttonStart.innerHTML = '録画中... 1秒後に停止します'
+                }, 2000)
+
                 // 3秒後に録画を停止
                 setTimeout(stopRecording, 3000);
             })
@@ -135,6 +145,7 @@
                 mediaRecorder.stop()
                 buttonStart.removeAttribute('disabled')
                 logText.textContent = 'stop recording'
+                buttonStart.innerHTML = '再び動画を撮影する'
             }
 
             function getCurrentPosition() {

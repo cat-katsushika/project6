@@ -76,7 +76,7 @@ class UploadVideoView(LoginRequiredMixin, TemplateView):
             video.video_file = video_file
             video.thumbnail_file = thumbnail_file
             video.save()
-            return redirect("posts:video_list")
+            return redirect("users:profile", user_id=request.user.id)
         else:
             # debug
             context["form_errors"] = video_form.errors
