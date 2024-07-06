@@ -10,7 +10,7 @@
     <h2>Video List</h2>
     {% for video in videos %}
         <div>
-            <video width="300" height="200" controls>
+            <video width="300" height="200" controls poster="{{ video.thumbnail_file.url }}">
                 <source src="{{ video.video_file.url }}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>

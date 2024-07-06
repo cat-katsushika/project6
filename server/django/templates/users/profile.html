@@ -15,8 +15,8 @@
     </a>
     {% for video in videos %}
         <div>
-            <video width="300" height="169" controls>
-                <source src="{{ video.video_file.url }}" type="video/webm">
+            <video width="300" height="169" controls poster="{{ video.thumbnail_file.url }}">
+                <source src="{{ video.video_file.url }}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
             <p>{{ video.user.username }} - {{ video.uploaded_at }}</p>
