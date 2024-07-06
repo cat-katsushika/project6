@@ -79,3 +79,30 @@ class TestView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["message"] = "Hello, World!"
         return context
+    
+
+    def post(self, request, *args, **kwargs):
+        latitude = request.POST.get("latitude")
+        longitude = request.POST.get("longitude")
+        video_file = request.FILES.get("video_file")
+        thumbnail_file = request.FILES.get("thumbnail_file")
+
+        if not latitude or not longitude or not video_file or not thumbnail_file:
+            return render(
+                request, "posts/upload_video.html", {"form": VideoForm(), "error": "位置情報、動画ファイル、サムネイルファイルの全てが必要です。"}
+            )
+
+        video_form = VideoForm(request.POST, request.FILES)
+        if video_form.is_valid():
+            video = video_form.save(commit=False)
+            video.user = request.user
+            video.latitude = float(latitude)
+            video.longitude = float(longitude)
+            video.video_file = video_file
+            video.thumbnail_file = thumbnail_file
+            video.save()
+        
+        return redirect("posts:video_list")
+
+    
+

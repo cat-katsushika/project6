@@ -32,6 +32,9 @@
         <button type="button" id="uploadButton" style="width: 300px; height: 100px;" disabled>Upload Video</button>
     </form>
 
+    <!-- サムネイル生成用のcanvas（非表示） -->
+    <canvas id="thumbnailCanvas" style="display:none;"></canvas>
+
 
     <script>
         async function main() {
@@ -47,6 +50,9 @@
             const latitudeInput = document.getElementById('latitude');
             const longitudeInput = document.getElementById('longitude');
             const uploadButton = document.getElementById('uploadButton');
+
+            // サムネイル生成用のcanvas
+            const thumbnailCanvas = document.getElementById('thumbnailCanvas');
 
 
             const logText = document.querySelector('#logText')
@@ -177,11 +183,11 @@
                 const video = document.createElement('video');
                 video.src = videoURL;
                 video.addEventListener('loadeddata', () => {
-                    const context = canvas.getContext('2d');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    canvas.toBlob(blob => resolve(blob), 'image/png');
+                    const context = thumbnailCanvas.getContext('2d');
+                    thumbnailCanvas.width = video.videoWidth;
+                    thumbnailCanvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, thumbnailCanvas.width, thumbnailCanvas.height);
+                    thumbnailCanvas.toBlob(blob => resolve(blob), 'image/png');
                 });
                 video.addEventListener('error', reject);
             });
