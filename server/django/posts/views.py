@@ -104,6 +104,8 @@ class TestView(TemplateView):
             video.save()
             return redirect("posts:video_list")
         else:
+            # debug
+            context["form_errors"] = video_form.errors
             context["form"] = video_form
 
         return self.render_to_response(context)
