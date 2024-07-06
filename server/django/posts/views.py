@@ -4,6 +4,7 @@ from django.http import JsonResponse
 
 # posts/views.py
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import TemplateView
 
 from .forms import VideoForm
 from .models import Video
@@ -69,3 +70,12 @@ def video_map(request):
 def video_detail(request, video_id):
     video = get_object_or_404(Video, id=video_id)
     return render(request, "posts/video_detail.html", {"video": video})
+
+
+class TestView(TemplateView):
+    template_name = "posts/test.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["message"] = "Hello, World!"
+        return context
