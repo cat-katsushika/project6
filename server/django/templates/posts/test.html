@@ -181,21 +181,33 @@
 
                 logText.textContent += 'イメージを描画しました。'
 
-                
-                const thumbnailBlob = thumbnailCanvas.toBlob();
+                try {
+                    const thumbnailBlob = thumbnailCanvas.toBlob();
+                } catch (error) {
+                    logText.textContent += 'サムネイルBlobを生成できませんでした。' + error;
+                }
 
                 logText.textContent += 'サムネイルBlobを生成しました。'
                 
                 // Create files for form submission
+                try {
                 const videoFile = new File([videoBlob], 'recordedVideo.mp4', { type: 'video/mp4' });
                 const thumbnailFile = new File([thumbnailBlob], 'thumbnail.png', { type: 'image/png' });
-                
+                } catch (error) {
+                    logText.textContent += 'ファイルを生成できませんでした。' + error;
+                }
+
                 logText.textContent += 'ファイルを生成しました。'
 
                 // formにファイルをセット
+
+                try {
                 setFileInput(videoFileInput, videoFile);
                 setFileInput(thumbnailFileInput, thumbnailFile);
-
+                } catch (error) {
+                    logText.textContent += 'ファイルをセットできませんでした。' + error;
+                }
+                
                 logText.textContent += 'ファイルをセットしました。'
 
                 // アップロードボタンを有効化
