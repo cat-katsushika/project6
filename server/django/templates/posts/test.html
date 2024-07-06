@@ -55,7 +55,7 @@
 
     <!-- サムネイル生成用のcanvas（非表示） -->
     <!-- <canvas id="thumbnailCanvas" style="display:none;"></canvas> -->
-    <canvas id="thumbnailCanvas"></canvas>
+    <canvas id="thumbnailCanvas" style="width: 20px; height: 20px;"></canvas>
 
 
     <script>
@@ -79,6 +79,31 @@
 
 
             const logText = document.querySelector('#logText')
+
+            // ビデオの読み込みが完了するまで待機する関数
+            function waitForLoadedData(videoElement) {
+                return new Promise((resolve) => {
+                    videoElement.addEventListener('loadeddata', () => {
+                        try {
+                            thumbnailCanvas.width = videoRecorded.videoWidth;
+                            thumbnailCanvas.height = videoRecorded.videoHeight;
+                        } catch (error) {
+                            logText.textContent += 'キャンバスのサイズを設定できませんでした。' + error;
+                        }
+                        logText.textContent += 'キャンバスのサイズを設定しました' + thumbnailCanvas.width + 'x' + thumbnailCanvas.height;
+                        
+                        try {
+                            thumbnailContext.drawImage(videoRecorded, 0, 0, videoRecorded.videoWidth, videoRecorded.videoHeight);
+                        } catch (error) {
+                            logText.textContent += 'イメージを描画できませんでした。' + error;
+                        }
+
+                        logText.textContent += 'イメージを描画しました。'
+
+                        resolve();
+                    }, { once: true }); // once: true ensures the event listener is removed after it triggers
+                });
+            }
 
             // カメラ映像を取得
             const stream = await navigator.mediaDevices.getUserMedia({
@@ -171,22 +196,10 @@
 
                 logText.textContent += 'サムネイルを生成します。'
 
-                try {
-                    thumbnailCanvas.width = videoRecorded.videoWidth;
-                    thumbnailCanvas.height = videoRecorded.videoHeight;
-                } catch (error) {
-                    logText.textContent += 'キャンバスのサイズを設定できませんでした。' + error;
-                }
+                await waitForLoadedData(videoRecorded);
+
                 
-                logText.textContent += 'キャンバスのサイズを設定しました'
-
-                try {
-                    thumbnailContext.drawImage(videoRecorded, 0, 0, videoRecorded.videoWidth, videoRecorded.videoHeight);
-                } catch (error) {
-                    logText.textContent += 'イメージを描画できませんでした。' + error;
-                }
-
-                logText.textContent += 'イメージを描画しました。'
+                
 
                 
                 try {
