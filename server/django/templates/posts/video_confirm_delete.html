@@ -7,19 +7,34 @@
 {% endblock title %}
 
 {% block content %}
-<h1>投稿削除画面です</h1>
-【投稿者】{{object.user}}
-【投稿日時】{{object.uploaded_at}}
-【動画】
-<video style="width: 100%;" controls poster="{{ object.thumbnail_file.url }}">
-    <source src="{{ object.video_file.url }}" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
+    <h1 class="text-lg pl-6"><strong>動画削除確認画面</strong></h1>
+
+<div class="m-6">
+    <div class="bg-white border shadow-sm rounded-xl w-full">
+        <video width="100%" class="h-auto rounded-t-xl" controls poster="{{ video.thumbnail_file.url }}">
+            <source src="{{ video.video_file.url }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="p-4 md:p-5">
+            <h3 class="text-lg font-bold text-gray-800">
+                {{ video.user.username }} - {{ video.uploaded_at }}
+            </h3>
+        </div>
+    </div>
+</div>
 
 <form action="" method="POST">
     {% csrf_token %}
-    <input type="submit" value="削除します">
+    <input type="submit" value="削除する" class="m-6 mt-2 mr-0 py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-red-500 text-white hover:bg-red-600 disabled:opacity-50 disabled:pointer-events-none">
+    <a 
+        class="mt-2 ml-2 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+        href="{% url 'posts:video_detail' video.id %}"
+        >
+        詳細へ戻る
+        </a>
 </form>
+
+
 
 {% endblock content %}
 

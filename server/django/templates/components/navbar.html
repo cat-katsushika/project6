@@ -1,6 +1,6 @@
+{% load static %}
 
-
-<nav class="navbar navbar-expand flex-md-row navbar-dark bg-dark fixed-top">
+<!-- <nav class="navbar navbar-expand flex-md-row navbar-dark bg-dark fixed-top">
     <div class="container justify-content-between">
         <a href="{% url 'users:home' %}" class="navbar-brand">Librite</a>
         <ul class="navbar-nav mr-md-2">
@@ -18,4 +18,24 @@
         </ul>
     </div>
 </nav>
-<div style="height: 56px;"></div>
+<div style="height: 56px;"></div> -->
+
+
+<header class="flex flex-nowrap sm:justify-start w-full bg-white text-sm py-4 sticky top-0 border-b border-gray-200">
+    <nav class="max-w-[85rem] w-full mx-auto px-4 flex items-center justify-between" aria-label="Global">
+        <a class="flex-none text-xl font-semibold " href="{% url 'users:home' %}">Librite</a>
+        <div class="flex flex-row items-center gap-5 sm:justify-end sm:mt-0 sm:ps-5">
+        {% if request.user.is_authenticated %}
+        <a class="font-medium text-gray-600 hover:text-gray-400 " href="{% url 'users:profile' request.user.id %}">{{ request.user.username }}</a>
+        <form action="{% url 'account_logout' %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <a class="font-medium text-gray-600 hover:text-gray-400 " href="#" onclick="this.closest('form').submit();">ログアウト</a>
+        </form>
+        {% else %}
+        <a class="font-medium text-gray-600 hover:text-gray-400 " href="{% url 'account_login' %}">ログイン</a>
+        {% endif %}
+      </div>
+    </nav>
+  </header>
+
+

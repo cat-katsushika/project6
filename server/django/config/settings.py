@@ -143,6 +143,8 @@ USE_TZ = True
 STATIC_URL = env.str("DJANGO_STATIC_URL", default="static/")
 STATIC_ROOT = env.str("DJANGO_STATIC_ROOT", default=BASE_DIR / "static")
 
+STATICFILES_DIRS = [BASE_DIR / "staticfiles"]
+
 MEDIA_URL = env.str("DJANGO_MEDIA_URL", default="media/")
 MEDIA_ROOT = env.str("DJANGO_MEDIA_ROOT", default=BASE_DIR / "media")
 

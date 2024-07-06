@@ -7,18 +7,32 @@
 {% endblock title %}
 
 {% block content %}
-    <h2>{{ video.user.username }}'s Video</h2>
-    <p>Uploaded at: {{ video.uploaded_at }}</p>
-    <video style="width: 100%;" controls poster="{{ video.thumbnail_file.url }}">
-        <source src="{{ video.video_file.url }}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
+<h1 class="text-lg pl-6"><strong>動画詳細</strong></h1>
 
-    <a href="{% url 'posts:delete_video' video.id %}">Delete Video</a>
-
-    <p><a href="{% url 'posts:video_map' %}">Back to Map</a></p>
-
-    <a href="{% url 'posts:video_list' %}">Back to Video List</a>
+<div class="m-6">
+    <div class="bg-white border shadow-sm rounded-xl w-full">
+        <video width="100%" class="h-auto rounded-t-xl" controls poster="{{ video.thumbnail_file.url }}">
+            <source src="{{ video.video_file.url }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="p-4 md:p-5">
+            <h3 class="text-lg font-bold text-gray-800">
+                {{ video.user.username }} - {{ video.uploaded_at }}
+            </h3>
+            <a class="mt-2 py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-red-500 text-white hover:bg-red-600 disabled:opacity-50 disabled:pointer-events-none"
+                href="{% url 'posts:delete_video' video.id %}">
+                削除...
+            </a>
+            <a class="mt-2 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                href="{% url 'posts:video_map'%}">
+                地図
+            </a>
+            <a class="mt-2 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+            href="{% url 'posts:video_list' %}">
+            動画リスト
+        </a>
+        </div>
+    </div>
+</div>
 
 {% endblock content %}
-
