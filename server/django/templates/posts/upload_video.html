@@ -181,7 +181,7 @@
                 recordingMessage.style.display = 'none';
 
                 // 録画データをBlobに変換
-                const blob = new Blob(recordedBlobs, { type: 'video/webm' });
+                const blob = new Blob(recordedBlobs, { type: 'video/mp4' });
 
                 // プレビュー用にビデオ要素のソースを設定
                 const videoURL = URL.createObjectURL(blob);
@@ -190,7 +190,7 @@
                 recordedVideo.play();
 
                 // BlobをFileオブジェクトに変換
-                const file = new File([blob], 'video.webm', { type: 'video/webm' });
+                const file = new File([blob], 'video.mp4', { type: 'video/mp4' });
                 const dataTransfer = new DataTransfer(); // DataTransferオブジェクトを作成
                 dataTransfer.items.add(file); // ファイルをDataTransferに追加
                 videoFileInput.files = dataTransfer.files; // ファイル入力にDataTransferを設定
@@ -265,7 +265,7 @@
                         recordingMessage.style.display = 'none';
 
                         // 録画データをBlobに変換
-                        const blob = new Blob(recordedBlobs, { type: 'video/webm' });
+                        const blob = new Blob(recordedBlobs, { type: 'video/mp4' });
 
                         // プレビュー用にビデオ要素のソースを設定
                         const videoURL = URL.createObjectURL(blob);
@@ -274,7 +274,7 @@
                         recordedVideo.play();
 
                         // BlobをFileオブジェクトに変換
-                        const file = new File([blob], 'video.webm', { type: 'video/webm' });
+                        const file = new File([blob], 'video.mp4', { type: 'video/mp4' });
                         const dataTransfer = new DataTransfer(); // DataTransferオブジェクトを作成
                         dataTransfer.items.add(file); // ファイルをDataTransferに追加
                         videoFileInput.files = dataTransfer.files; // ファイル入力にDataTransferを設定
