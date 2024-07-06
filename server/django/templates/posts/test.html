@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How to record a video with JavaScript</title>
+    <title>Camera Selector</title>
 </head>
-
 <body>
-    <div>
-        <button type="button" id="buttonStart" style="width: 300px; height: 100px;">Start</button>
-        <button type="button" id="buttonStop" style="width: 300px; height: 100px;" disabled>Stop</button>
-        <div id="logText"></div>
-    </div>
-    <div>
-        <video autoplay muted playsinline id="videoLive"></video>
-    </div>
-    <div>
-        <video controls playsinline id="videoRecorded"></video>
-    </div>
+    <video id="videoLive" autoplay></video>
+    <video id="videoRecorded" controls></video>
+    <button id="buttonStart">Start Recording</button>
+    <button id="buttonStop" disabled>Stop Recording</button>
+    <p id="logText"></p>
+    <select id="cameraSelect"></select>
+
     <script>
         async function main() {
             const buttonStart = document.querySelector('#buttonStart')
@@ -26,35 +20,54 @@
             const videoLive = document.querySelector('#videoLive')
             const videoRecorded = document.querySelector('#videoRecorded')
             const logText = document.querySelector('#logText')
+            const cameraSelect = document.querySelector('#cameraSelect')
 
-            const stream = await navigator.mediaDevices.getUserMedia({ // <1>
-                video: true,
+            const devices = await navigator.mediaDevices.enumerateDevices()
+            const videoDevices = devices.filter(device => device.kind === 'videoinput')
+
+            videoDevices.forEach(device => {
+                const option = document.createElement('option')
+                option.value = device.deviceId
+                option.text = device.label || `Camera ${cameraSelect.length + 1}`
+                cameraSelect.appendChild(option)
+            })
+
+            let stream = await navigator.mediaDevices.getUserMedia({
+                video: { deviceId: videoDevices[0].deviceId },
                 audio: true,
             })
 
             videoLive.srcObject = stream
 
-            // if (!MediaRecorder.isTypeSupported('video/webm')) { // <2>
-            //     console.warn('video/webm is not supported')
-            //     logText.textContent = 'video/webm is not supported'
-            // }
-
-            // const mediaRecorder = new MediaRecorder(stream, { // <3>
-            //     mimeType: 'video/webm',
-            // })
-
-            if (!MediaRecorder.isTypeSupported('video/mp4')) { // <2>
+            if (!MediaRecorder.isTypeSupported('video/mp4')) {
                 console.warn('video/mp4 is not supported')
                 logText.textContent = 'video/mp4 is not supported'
             }
 
-            const mediaRecorder = new MediaRecorder(stream, { // <3>
+            let mediaRecorder = new MediaRecorder(stream, {
                 mimeType: 'video/mp4',
+            })
+
+            cameraSelect.addEventListener('change', async () => {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop())
+                }
+
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: cameraSelect.value },
+                    audio: true,
+                })
+
+                videoLive.srcObject = stream
+
+                mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'video/mp4',
+                })
             })
 
             buttonStart.addEventListener('click', () => {
                 logText.textContent = 'click start button'
-                mediaRecorder.start() // <4>
+                mediaRecorder.start()
                 buttonStart.setAttribute('disabled', '')
                 buttonStop.removeAttribute('disabled')
                 logText.textContent = 'start recording'
@@ -62,19 +75,18 @@
 
             buttonStop.addEventListener('click', () => {
                 logText.textContent = 'click stop button'
-                mediaRecorder.stop() // <5>
+                mediaRecorder.stop()
                 buttonStart.removeAttribute('disabled')
                 buttonStop.setAttribute('disabled', '')
                 logText.textContent = 'stop recording'
             })
 
             mediaRecorder.addEventListener('dataavailable', event => {
-                videoRecorded.src = URL.createObjectURL(event.data) // <6>
+                videoRecorded.src = URL.createObjectURL(event.data)
             })
         }
 
         main()
     </script>
 </body>
-
 </html>
