@@ -156,12 +156,22 @@
                 // Create a thumbnail
                 // const thumbnailBlob = await createThumbnail(videoURL);
 
-                thumbnailCanvas.width = recordedVideo.videoWidth;
-                thumbnailCanvas.height = recordedVideo.videoHeight;
+                logText.textContent += 'サムネイルを生成します。'
 
+                try {
+                    thumbnailCanvas.width = recordedVideo.videoWidth;
+                    thumbnailCanvas.height = recordedVideo.videoHeight;
+                } catch (error) {
+                    logText.textContent += 'キャンバスのサイズを設定できませんでした。' + error;
+                }
+                
                 logText.textContent += 'キャンバスのサイズを設定しました'
 
-                thumbnailContext.drawImage(recordedVideo, 0, 0, recordedVideo.videoWidth, recordedVideo.videoHeight);
+                try {
+                    thumbnailContext.drawImage(recordedVideo, 0, 0, recordedVideo.videoWidth, recordedVideo.videoHeight);
+                } catch (error) {
+                    logText.textContent += 'イメージを描画できませんでした。' + error;
+                }
                 // thumbnailCanvas.toBlob((blob) => {
                 //                 const thumbnailFile = new File([blob], 'thumbnail.png', { type: 'image/png' });
                 //                 const thumbnailDataTransfer = new DataTransfer();
@@ -170,6 +180,7 @@
                 //             });
 
                 logText.textContent += 'イメージを描画しました。'
+
                 
                 thumbnailBlob = thumbnailCanvas.toBlob();
 
