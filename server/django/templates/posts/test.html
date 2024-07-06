@@ -10,63 +10,165 @@
 <body>
     <div>
         <button type="button" id="buttonStart" style="width: 300px; height: 100px;">Start</button>
-        <button type="button" id="buttonStop" style="width: 300px; height: 100px;" disabled>Stop</button>
+        <!-- <button type="button" id="buttonStop" style="width: 300px; height: 100px;" disabled>Stop</button> -->
         <div id="logText"></div>
     </div>
     <div>
-        <video autoplay muted playsinline id="videoLive"></video>
+        <video autoplay muted playsinline id="videoLive" style="width: 300px; height: 300px;"></video>
     </div>
     <div>
-        <video controls playsinline id="videoRecorded"></video>
+        <video controls playsinline id="videoRecorded" style="width: 300px; height: 300px;"></video>
     </div>
+
+    <form id="uploadForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- ファイル入力（非表示） -->
+        <input type="file" id="videoFile" name="video_file" accept="video/*" style="display:none;">
+        <input type="file" id="thumbnailFile" name="thumbnail_file" accept="image/*" style="display:none;">
+        <!-- 位置情報入力（非表示） -->
+        <input type="text" id="latitude" name="latitude" style="display:none;">
+        <input type="text" id="longitude" name="longitude" style="display:none;">
+        <!-- アップロードボタン（初期状態では無効化） -->
+        <button type="button" id="uploadButton" style="width: 300px; height: 100px;" disabled>Upload Video</button>
+    </form>
+
+
     <script>
         async function main() {
+            // 各要素を取得
             const buttonStart = document.querySelector('#buttonStart')
-            const buttonStop = document.querySelector('#buttonStop')
             const videoLive = document.querySelector('#videoLive')
             const videoRecorded = document.querySelector('#videoRecorded')
+
+            // formの要素
+            const uploadForm = document.getElementById('uploadForm');
+            const videoFileInput = document.getElementById('videoFile');
+            const thumbnailFileInput = document.getElementById('thumbnailFile');
+            const latitudeInput = document.getElementById('latitude');
+            const longitudeInput = document.getElementById('longitude');
+            const uploadButton = document.getElementById('uploadButton');
+
+
             const logText = document.querySelector('#logText')
 
-            const stream = await navigator.mediaDevices.getUserMedia({ // <1>
+            // カメラ映像を取得
+            const stream = await navigator.mediaDevices.getUserMedia({
                 video: {
                     width: { ideal: 720 },
                     height: { ideal: 720 },
                     facingMode: { exact: 'environment' },
                 },
                 audio: true,
+            }).catch(error => {
+                buttonStart.setAttribute('disabled', '')
+                buttonStart.innerHTML = '要件を満たす動画撮影用デバイスを取得できませんでした'
+                logText.textContent = error
             })
 
+            // カメラ映像を表示
             videoLive.srcObject = stream
 
-            if (!MediaRecorder.isTypeSupported('video/mp4')) { // <2>
-                console.warn('video/mp4 is not supported')
+            // video/mp4がサポートされていない場合はエラーメッセージを表示
+            if (!MediaRecorder.isTypeSupported('video/mp4')) {
                 logText.textContent = 'video/mp4 is not supported'
             }
 
-            const mediaRecorder = new MediaRecorder(stream, { // <3>
+            // MediaRecorderを生成
+            const mediaRecorder = new MediaRecorder(stream, {
                 mimeType: 'video/mp4',
             })
 
+            // uploadButtonを押したときの処理
+            uploadButton.addEventListener('click', () => {
+                if (!videoFileInput.files.length > 0  && !thumbnailFileInput.files.length > 0 && !latitudeInput.value && !longitudeInput.value) {
+                    uploadForm.submit();
+                }
+            })
+
+            // 録画ボタンを押したときの処理
             buttonStart.addEventListener('click', () => {
                 logText.textContent = 'click start button'
-                mediaRecorder.start() // <4>
+                mediaRecorder.start()
                 buttonStart.setAttribute('disabled', '')
-                buttonStop.removeAttribute('disabled')
-                logText.textContent = 'start recording'
+                logText.textContent += 'start recording'
+
+                // 3秒後に録画を停止
+                setTimeout(stopRecording, 3000);
             })
 
-            buttonStop.addEventListener('click', () => {
-                logText.textContent = 'click stop button'
-                mediaRecorder.stop() // <5>
+
+            // 録画を停止する関数
+            function stopRecording() {
+                mediaRecorder.stop()
                 buttonStart.removeAttribute('disabled')
-                buttonStop.setAttribute('disabled', '')
                 logText.textContent = 'stop recording'
-            })
+            }
 
-            mediaRecorder.addEventListener('dataavailable', event => {
-                videoRecorded.src = URL.createObjectURL(event.data) // <6>
+            // 現在地を取得する関数
+            function getCurrentPosition() {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    logText.textContent += 'latitude: ' + position.coords.latitude + ', longitude: ' + position.coords.longitude;
+                    latitudeInput.value = position.coords.latitude;
+                    longitudeInput.value = position.coords.longitude;
+                }, (error) => {
+                    alert('位置情報を取得できませんでした。位置情報が必要です。');
+                });
+            }
+
+            // 録画が終了したときの処理
+            mediaRecorder.addEventListener('dataavailable', async event => {
+                // 現在地を取得
+                getCurrentPosition()
+
+                const videoBlob = new Blob([event.data], { type: 'video/mp4' });
+                const videoURL = URL.createObjectURL(videoBlob);
+                
+                // 録画した動画を表示
+                videoRecorded.src = videoURL;
+
+                // Create a thumbnail
+                const thumbnailBlob = await createThumbnail(videoURL);
+                
+                // Create files for form submission
+                const videoFile = new File([videoBlob], 'recordedVideo.mp4', { type: 'video/mp4' });
+                const thumbnailFile = new File([thumbnailBlob], 'thumbnail.png', { type: 'image/png' });
+                
+                // formにファイルをセット
+                setFileInput(videoFileInput, videoFile);
+                setFileInput(thumbnailFileInput, thumbnailFile);
+
+                // アップロードボタンを有効化
+                if (videoFileInput.files.length > 0 && thumbnailFileInput.files.length > 0 && latitudeInput.value && longitudeInput.value) {
+                uploadButton.removeAttribute('disabled');
+                }
+
             })
         }
+
+        // formにファイルをセットする関数
+        function setFileInput(fileInput, file) {
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+        }
+
+        // サムネイルを生成する関数
+        async function createThumbnail(videoURL) {
+            return new Promise((resolve, reject) => {
+                const video = document.createElement('video');
+                video.src = videoURL;
+                video.addEventListener('loadeddata', () => {
+                    const context = canvas.getContext('2d');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob(blob => resolve(blob), 'image/png');
+                });
+                video.addEventListener('error', reject);
+            });
+        }
+
+
 
         main()
     </script>
