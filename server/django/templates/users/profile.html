@@ -22,6 +22,7 @@
             <p>{{ video.user.username }} - {{ video.uploaded_at }}</p>
         </div>
         <a href="{% url 'posts:video_detail' video.id %}">詳細</a>
+        <a href="{% url 'posts:video_map'%}">地図</a>
         <p>------------------------------------</p>
     {% endfor %}
 {% endblock content %}
