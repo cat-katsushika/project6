@@ -139,7 +139,11 @@
 
                 // アップロードボタンを有効化
                 if (videoFileInput.files.length > 0 && thumbnailFileInput.files.length > 0 && latitudeInput.value && longitudeInput.value) {
-                uploadButton.removeAttribute('disabled');
+                    uploadButton.removeAttribute('disabled');
+                } else {
+                    uploadButton.setAttribute('disabled', '');
+                    logText.textContent += '動画、サムネイル、位置情報のいずれかが取得できていません。もう一度録画してください。';
+                    alert('動画、サムネイル、位置情報のいずれかが取得できていません。もう一度録画してください。');
                 }
 
             })
