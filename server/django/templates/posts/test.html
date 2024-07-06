@@ -128,20 +128,41 @@
             }
 
             // 現在地を取得する関数
+            // function getCurrentPosition() {
+            //     navigator.geolocation.getCurrentPosition((position) => {
+            //         logText.textContent += 'latitude: ' + position.coords.latitude + ', longitude: ' + position.coords.longitude;
+            //         latitudeInput.value = position.coords.latitude;
+            //         longitudeInput.value = position.coords.longitude;
+            //     }, (error) => {
+            //         alert('位置情報を取得できませんでした。位置情報が必要です。');
+            //     });
+            // }
+
             function getCurrentPosition() {
-                navigator.geolocation.getCurrentPosition((position) => {
-                    logText.textContent += 'latitude: ' + position.coords.latitude + ', longitude: ' + position.coords.longitude;
-                    latitudeInput.value = position.coords.latitude;
-                    longitudeInput.value = position.coords.longitude;
-                }, (error) => {
-                    alert('位置情報を取得できませんでした。位置情報が必要です。');
+                return new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            resolve(position);
+                        },
+                        (error) => {
+                            reject(error);
+                        }
+                    );
                 });
             }
 
             // 録画が終了したときの処理
             mediaRecorder.addEventListener('dataavailable', async event => {
                 // 現在地を取得
-                await getCurrentPosition()
+                try {
+                    const position = await getCurrentPosition();
+                    logText.textContent += 'latitude: ' + position.coords.latitude + ', longitude: ' + position.coords.longitude;
+                    latitudeInput.value = position.coords.latitude;
+                    longitudeInput.value = position.coords.longitude;
+                } catch (error) {
+                    alert('位置情報を取得できませんでした。位置情報が必要です。');
+                    logText.textContent += '位置情報を取得できませんでした。位置情報が必要です。' + error;
+                }
 
                 logText.textContent += '現在地を取得しました。'
 
