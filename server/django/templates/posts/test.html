@@ -141,7 +141,7 @@
             // 録画が終了したときの処理
             mediaRecorder.addEventListener('dataavailable', async event => {
                 // 現在地を取得
-                getCurrentPosition()
+                await getCurrentPosition()
 
                 logText.textContent += '現在地を取得しました。'
 
@@ -177,11 +177,11 @@
 
                 
                 try {
-                    const thumbnailBlob = thumbnailCanvas.toBlob();
+                    const thumbnailBlob = await canvasToBlob(thumbnailCanvas);
                 } catch (error) {
                     logText.textContent += 'サムネイルBlobを生成できませんでした。' + error;
                 }
-                
+
                 const thumbnailBlob = await canvasToBlob(thumbnailCanvas);
                 // try {
                 //     const thumbnailBlob = thumbnailCanvas.toBlob();
