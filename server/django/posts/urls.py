@@ -12,4 +12,5 @@ urlpatterns = [
     path("map/data/", views.video_map_api, name="video_map_api"),  # 地図データ用のJSONビュー
     path("video/<uuid:video_id>/", views.video_detail, name="video_detail"),  # 動画詳細ページ
     path("video/<uuid:pk>/delete/", views.DeleteVideoView.as_view(), name="delete_video"),  # 動画削除ビュー
+    path("video/<uuid:video_id>/regenerate_thumbnail/", views.regenerate_thumbnail, name="regenerate_thumbnail"),
 ]

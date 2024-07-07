@@ -1,18 +1,18 @@
 # posts/views.py
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse, JsonResponse
 
 # posts/views.py
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-
 from django.urls import reverse
-from django.core.exceptions import PermissionDenied
+from django.views.generic import TemplateView
 from django.views.generic.edit import DeleteView
+
 from .forms import VideoForm
 from .models import Video
-
+from .utils import generate_thumbnail
 
 
 def video_list(request):
@@ -86,13 +86,12 @@ class UploadVideoView(LoginRequiredMixin, TemplateView):
             context["form"] = video_form
 
         return self.render_to_response(context)
-    
 
 
 class DeleteVideoView(LoginRequiredMixin, DeleteView):
     model = Video
     template_name = "posts/video_confirm_delete.html"
-    
+
     def get_success_url(self):
         return reverse("users:profile", kwargs={"user_id": self.request.user.id})
 
@@ -101,3 +100,18 @@ class DeleteVideoView(LoginRequiredMixin, DeleteView):
         if video.user != self.request.user:
             raise PermissionDenied
         return video
+
+
+@login_required
+def regenerate_thumbnail(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
+
+    # if video.user != request.user:
+    #     return HttpResponse('あなたの投稿ではありません', status=401)
+
+    try:
+        thumbnail_content = generate_thumbnail(video.video_file.path)
+        video.thumbnail_file.save(thumbnail_content.name, thumbnail_content, save=True)
+        return redirect("posts:video_detail", video_id=video.id)
+    except Exception:
+        return HttpResponse("サムネイルの再生成に失敗しました", status=500)
