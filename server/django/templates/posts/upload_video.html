@@ -119,8 +119,8 @@ class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg
             // カメラ映像を取得
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: {
-                    width: { ideal: 720 },
-                    height: { ideal: 720 },
+                    width: { ideal: 1080 },
+                    height: { ideal: 1080 },
                     facingMode: { exact: 'environment' },
                 },
                 audio: true,

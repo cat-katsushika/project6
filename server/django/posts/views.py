@@ -44,6 +44,10 @@ def video_map(request):
     return render(request, "posts/video_map.html")
 
 
+class VideoMapView(TemplateView):
+    template_name = "posts/map.html"
+
+
 def video_detail(request, video_id):
     video = get_object_or_404(Video, id=video_id)
     return render(request, "posts/video_detail.html", {"video": video})

@@ -74,7 +74,9 @@ execblue:
 delete:
 	rm -rf db/
 
-
+.PHONY: css
+css:
+	npx tailwindcss -i ./django/staticfiles/css/input.css -o ./django/staticfiles/css/output.css
 
 .PHONY: prod-build
 prod-build:

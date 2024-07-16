@@ -1,0 +1,18 @@
+<!-- ヘッダー -->
+<header class="flex justify-start flex-nowrap w-full bg-white text-sm py-4 sticky top-0">
+    <nav class="max-w-[85rem] w-full mx-auto px-4 flex items-center justify-between" aria-label="Global">
+        <a class="text-xl font-semibold" href="{% url 'posts:video_list'%}">Librite</a>
+        <div class="flex flex-row items-center gap-5 ml-2 sm:justify-end sm:mt-0 sm:ps-5">
+            {% if request.user.is_authenticated %}
+                <a class="font-medium text-gray-600 hover:text-gray-400 " href="{% url 'users:profile' request.user.id %}">{{ request.user.username }}</a>
+                <form action="{% url 'account_logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <a class="font-medium text-gray-600 hover:text-gray-400 " href="#" onclick="this.closest('form').submit();">ログアウト</a>
+                </form>
+            {% else %}
+                <a class="font-medium text-gray-600 hover:text-gray-400 " href="{% url 'account_login' %}">ログイン</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+<!-- ヘッダー -->

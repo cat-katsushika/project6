@@ -1,0 +1,51 @@
+<!-- ボトムナブバー -->
+<div class="fixed bottom-0 w-full">
+    <div class="flex bg-white p-3 border-t border-gray-200">
+        <nav class="flex space-x-8 mx-auto">
+            <a href="{% url 'posts:video_list' %}" class="text-gray-500 hover:text-blue-500 flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+                    <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                    <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                </svg>
+                <span class="block text-xs">Home</span>
+            </a>
+            <a href="{% url 'posts:upload_video' %}" class="text-gray-500 hover:text-blue-500 flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 5l0 14" />
+                    <path d="M5 12l14 0" />
+                </svg>
+                <span class="block text-xs">Upload</span>
+            </a>
+            <a href="{% url 'posts:video_map' %}" class="text-gray-500 hover:text-blue-500 flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-map-2">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 18.5l-3 -1.5l-6 3v-13l6 -3l6 3l6 -3v7.5" />
+                    <path d="M9 4v13" />
+                    <path d="M15 7v5.5" />
+                    <path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" />
+                    <path d="M19 18v.01" />
+                </svg>
+                <span class="block text-xs">Map</span>
+            </a>
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'users:profile' request.user.id %}" class="text-gray-500 hover:text-blue-500 flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-user">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                </svg>
+                <span class="block text-xs">Profile</span>
+            </a>
+            {% else %}
+            <a href="{% url 'account_login' %}" class="text-gray-500 hover:text-blue-500 flex flex-col items-center">
+                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-big-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /></svg>
+                <span class="block text-xs">SignUp</span>
+            </a>
+            {% endif %}
+        </nav>
+    </div>
+</div>
+<!-- ボトムナブバー -->

@@ -1,0 +1,91 @@
+{% extends 'base_v2.html' %} {% load static %}
+
+<!--  -->
+
+{% block title %}Librite Map{% endblock title %}
+
+<!--  -->
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+    .thumbnail-popup img {
+        max-width: 150px;
+    }
+    .leaflet-marker-icon.avatar-marker img {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+    }
+</style>
+{% endblock extra_head %}
+
+<!--  -->
+
+{% block content %}
+<div class="mx-auto p-2 px-4">
+    <!-- 画面にフィットさせるために高さを計算している -->
+    <div class="bg-white border border-gray-200 shadow-sm rounded-xl p-4" style="height: calc(100vh - 145px)">
+        <div id="map" class="h-full w-full rounded-xl"></div>
+    </div>
+</div>
+{% endblock content %}
+
+<!--  -->
+
+{% block extra_script %}
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    const map = L.map("map", {
+        center: [35.6895, 139.6917],
+        zoom: 4,
+    });
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    // JSONデータを取得して地図上に表示
+    fetch("/map/data/")
+        .then((response) => response.json())
+        .then((videos) => {
+            videos.forEach((video) => {
+                if (video.latitude && video.longitude) {
+                    let marker;
+                    const avatarIcon = L.icon({
+                        iconUrl: video.avatar_url,
+                        iconSize: [40, 40], // アバターアイコンのサイズ
+                        className: "avatar-marker",
+                    });
+                    marker = L.marker([video.latitude, video.longitude], {
+                        icon: avatarIcon,
+                    }).addTo(map);
+
+                    const popupContent = `
+                            <div class="thumbnail-popup pt-2" style="width: 150px;">
+                                <img src="${video.thumbnail_url}" alt="Thumbnail" class="rounded-lg">
+                                <p>${video.username}</p>
+                                <p>${video.uploaded_at}</p>
+                                <a href="/video/${video.id}/">View Video</a>
+                            </div>
+                        `;
+                    marker.bindPopup(popupContent);
+                }
+            });
+        });
+
+
+    // ここからはアイコンを丸くする処理
+    function applyRoundStyle() {
+        document.querySelectorAll('.avatar-marker').forEach(function(element) {
+            element.style.borderRadius = '50%';
+            element.style.width = '40px';
+            element.style.height = '40px';
+        });
+    }
+
+    // 地図のズームや移動時にスタイルを再適用
+    map.on('layeradd', applyRoundStyle);
+    map.on('zoomend', applyRoundStyle);
+    map.on('moveend', applyRoundStyle)
+</script>
+{% endblock extra_script %}
