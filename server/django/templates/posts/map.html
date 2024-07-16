@@ -87,5 +87,17 @@
     map.on('layeradd', applyRoundStyle);
     map.on('zoomend', applyRoundStyle);
     map.on('moveend', applyRoundStyle)
+
+
+    // スクロールイベントを無効にする
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // スクロールイベントを無効にする
+        document.body.style.overflow = 'hidden';
+
+        // ページ全体でのスクロールを禁止
+        window.addEventListener('scroll', function() {
+            window.scrollTo(0, 0);
+        });
+    });
 </script>
 {% endblock extra_script %}
