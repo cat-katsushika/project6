@@ -1,312 +1,249 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'base_v2.html' %} {% load static %}
 
+<!--  -->
 
-{% block title %}
-【Librite】
-{% endblock title %}
+{% block title %}Librite Record and Upload{% endblock title %}
+
+<!--  -->
+
+{% block extra_head %}
+{% endblock extra_head %}
+
+<!--  -->
 
 {% block content %}
-    <div>
-        <div id="logText"></div>
+<div class="max-w-xl mx-auto p-4 space-y-4">
+    <div id="video-recording-section" class="bg-white border rounded-lg shadow-sm">
+        <div class="p-4">
+            <video autoplay muted playsinline id="videoLive" class="rounded-lg" style="width: 100%; aspect-ratio: 1 / 1;"></video>
+        </div>
+        <div class="p-4">
+            <button id="recordButton" type="button" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-camera">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
+                    <path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                </svg>
+                Record Video
+            </button>
+        </div>
     </div>
 
-    <a
-    href="{% url 'posts:upload_video'%}"
-    class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
->
-    動画撮影
-</a>
-<a
-href="{% url 'posts:video_list'%}"
-class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
->
-    動画一覧
-</a>
-{% if request.user.is_authenticated %}
-<a
-href="{% url 'users:profile' request.user.id %}"
-class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
->
-    マイページ
-</a>
-{% endif %}
-<a
-href="{% url 'posts:video_map'%}"
-class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
->
-地図
-</a>
-
-    <div class="m-4">
-        <video autoplay muted playsinline id="videoLive" style="width: 100%; aspect-ratio: 1 / 1;"></video>
+    <div id="video-upload-section" class="bg-white border rounded-lg shadow-sm" style="display: none;">
+        <div class="p-4">
+            <video controls playsinline id="videoRecorded" class="rounded-lg" style="width: 100%; aspect-ratio: 1 / 1;"></video>
+        </div>
+        <div class="flex p-4">
+            <div class="flex-1 pr-1">
+                <button type="button" id="retakeButton" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-big-left">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M20 15h-8v3.586a1 1 0 0 1 -1.707 .707l-6.586 -6.586a1 1 0 0 1 0 -1.414l6.586 -6.586a1 1 0 0 1 1.707 .707v3.586h8a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1z" />
+                    </svg>
+                    Retake
+                </button>
+            </div>
+            <div class="flex-1 pl-1">
+                <form id="uploadForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <!-- ファイル入力（非表示） -->
+                    <input type="file" id="videoFile" name="video_file" accept="video/*" style="display:none;">
+                    <!-- 位置情報入力（非表示） -->
+                    <input type="text" id="latitude" name="latitude" style="display:none;">
+                    <input type="text" id="longitude" name="longitude" style="display:none;">
+                    <!-- アップロードボタン（初期状態では無効化） -->
+                    <button type="button" id="uploadButton" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-big-up">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                        </svg>
+                        Upload
+                    </button>
+                </form>
+                
+            </div>
+        </div>
     </div>
-
-    <div class="m-4">
-    <button type="button" id="buttonStart" style="width: 100%; height: 100px;" class="py-3 px-auto inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:text-blue-400 dark:hover:border-blue-400">動画を撮影する</button>
 </div>
 
-    <div class="m-4">撮影した動画↓ 投稿ボタンは下部</div>
-    <div class="m-4">
-        <video controls playsinline id="videoRecorded" style="width: 100%; aspect-ratio: 1 / 1;"></video>
-    </div>
-
-    <form id="uploadForm" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <!-- ファイル入力（非表示） -->
-        <input type="file" id="videoFile" name="video_file" accept="video/*" style="display:none;">
-        <input type="file" id="thumbnailFile" name="thumbnail_file" accept="image/*" style="display:none;">
-        <!-- 位置情報入力（非表示） -->
-        <input type="text" id="latitude" name="latitude" style="display:none;">
-        <input type="text" id="longitude" name="longitude" style="display:none;">
-        <!-- アップロードボタン（初期状態では無効化） -->
-         <div class="m-4">
-        <button type="button" id="uploadButton" style="width: 100%; height: 100px;" class="py-3 px-auto inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:text-blue-400 dark:hover:border-blue-400" disabled>投稿する</button>
-    </div>
-    </form>
-
-    <!-- サムネイル生成用のcanvas（非表示） -->
-    <canvas id="thumbnailCanvas" style="display:none;"></canvas>
-
-
-    <script>
-        async function main() {
-            // 各要素を取得
-            const buttonStart = document.querySelector('#buttonStart')
-            const videoLive = document.querySelector('#videoLive')
-            const videoRecorded = document.querySelector('#videoRecorded')
-
-            // formの要素
-            const uploadForm = document.getElementById('uploadForm');
-            const videoFileInput = document.getElementById('videoFile');
-            const thumbnailFileInput = document.getElementById('thumbnailFile');
-            const latitudeInput = document.getElementById('latitude');
-            const longitudeInput = document.getElementById('longitude');
-            const uploadButton = document.getElementById('uploadButton');
-
-            // サムネイル生成用のcanvas
-            const thumbnailCanvas = document.getElementById('thumbnailCanvas');
-            const thumbnailContext = thumbnailCanvas.getContext('2d');
-
-
-            const logText = document.querySelector('#logText')
-
-            // ビデオの読み込みが完了するまで待機する関数
-            function waitForLoadedData(videoElement) {
-                return new Promise((resolve) => {
-                    videoElement.addEventListener('loadeddata', () => {
-                        try {
-                            thumbnailCanvas.width = videoRecorded.videoWidth;
-                            thumbnailCanvas.height = videoRecorded.videoHeight;
-                        } catch (error) {
-                            logText.textContent += 'キャンバスのサイズを設定できませんでした。' + error;
-                        }
-                        logText.textContent += 'キャンバスのサイズを設定しました' + thumbnailCanvas.width + 'x' + thumbnailCanvas.height;
-                        
-                        try {
-                            thumbnailContext.drawImage(videoRecorded, 0, 0, videoRecorded.videoWidth, videoRecorded.videoHeight);
-                        } catch (error) {
-                            logText.textContent += 'イメージを描画できませんでした。' + error;
-                        }
-
-                        logText.textContent += 'イメージを描画しました。'
-
-                        resolve();
-                    }, { once: true }); // once: true ensures the event listener is removed after it triggers
-                });
-            }
-
-            // カメラ映像を取得
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    width: { ideal: 1080 },
-                    height: { ideal: 1080 },
-                    facingMode: { exact: 'environment' },
-                },
-                audio: true,
-            }).catch(error => {
-                buttonStart.setAttribute('disabled', '')
-                buttonStart.innerHTML = '要件を満たす動画撮影用デバイスを取得できませんでした'
-                logText.textContent = error
-            })
-
-            // カメラ映像を表示
-            videoLive.srcObject = stream
-
-            // video/mp4がサポートされていない場合はエラーメッセージを表示
-            if (!MediaRecorder.isTypeSupported('video/mp4')) {
-                logText.textContent = 'video/mp4 is not supported'
-            }
-
-            // MediaRecorderを生成
-            const mediaRecorder = new MediaRecorder(stream, {
-                mimeType: 'video/mp4',
-            })
-
-            // uploadButtonを押したときの処理
-            uploadButton.addEventListener('click', () => {
-                uploadForm.submit();
-            })
-
-
-            // 録画ボタンを押したときの処理
-            buttonStart.addEventListener('click', () => {
-                logText.textContent = 'click start button'
-                mediaRecorder.start()
-                buttonStart.setAttribute('disabled', '')
-                logText.textContent += 'start recording'
-
-                buttonStart.innerHTML = '録画中... 3秒後に停止します'
-
-                setTimeout(() => {
-                    buttonStart.innerHTML = '録画中... 2秒後に停止します'
-                }, 1000)
-
-                setTimeout(() => {
-                    buttonStart.innerHTML = '録画中... 1秒後に停止します'
-                }, 2000)
-
-                // 3秒後に録画を停止
-                setTimeout(stopRecording, 3000);
-            })
-
-
-            // 録画を停止する関数
-            function stopRecording() {
-                mediaRecorder.stop()
-                buttonStart.removeAttribute('disabled')
-                logText.textContent = 'stop recording'
-                buttonStart.innerHTML = '再び動画を撮影する'
-            }
-
-            function getCurrentPosition() {
-                return new Promise((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            resolve(position);
-                        },
-                        (error) => {
-                            reject(error);
-                        }
-                    );
-                });
-            }
-
-            // 録画が終了したときの処理
-            mediaRecorder.addEventListener('dataavailable', async event => {
-                // 現在地を取得
-                try {
-                    const position = await getCurrentPosition();
-                    logText.textContent += 'latitude: ' + position.coords.latitude + ', longitude: ' + position.coords.longitude;
-                    latitudeInput.value = position.coords.latitude;
-                    longitudeInput.value = position.coords.longitude;
-                } catch (error) {
-                    alert('位置情報を取得できませんでした。位置情報が必要です。');
-                    logText.textContent += '位置情報を取得できませんでした。位置情報が必要です。' + error;
-                }
-
-                logText.textContent += '現在地を取得しました。'
-
-                const videoBlob = new Blob([event.data], { type: 'video/mp4' });
-                const videoURL = URL.createObjectURL(videoBlob);
-                
-                // 録画した動画を表示
-                videoRecorded.src = videoURL;
-                videoRecorded.controls = true;
-                videoRecorded.play();
-
-                logText.textContent += '録画した動画を表示しました。'
-
-
-                logText.textContent += 'サムネイルを生成します。'
-
-                await waitForLoadedData(videoRecorded);
-                
-                try {
-                    const thumbnailBlob = await canvasToBlob(thumbnailCanvas);
-                } catch (error) {
-                    logText.textContent += 'サムネイルBlobを生成できませんでした。' + error;
-                }
-
-                const thumbnailBlob = await canvasToBlob(thumbnailCanvas);
-
-                logText.textContent += 'サムネイルBlobを生成しました。'
-                
-                // Create files for form submission
-                try {
-                const videoFile = new File([videoBlob], 'recordedVideo.mp4', { type: 'video/mp4' });
-                const thumbnailFile = new File([thumbnailBlob], 'thumbnail.png', { type: 'image/png' });
-                } catch (error) {
-                    logText.textContent += 'ファイルを生成できませんでした。' + error;
-                }
-                
-                // try-catchはブロック内で完結しているため再度実行
-                const videoFile = new File([videoBlob], 'recordedVideo.mp4', { type: 'video/mp4' });
-                const thumbnailFile = new File([thumbnailBlob], 'thumbnail.png', { type: 'image/png' });
-
-
-
-                logText.textContent += 'ファイルを生成しました。'
-
-                // formにファイルをセット
-
-                try {
-                    setFileInput(videoFileInput, videoFile);
-                    setFileInput(thumbnailFileInput, thumbnailFile);
-                } catch (error) {
-                    logText.textContent += 'ファイルをセットできませんでした。' + error;
-                }
-
-                logText.textContent += 'ファイルをセットしました。'
-
-                // アップロードボタンを有効化
-                if (videoFileInput.files.length > 0 && thumbnailFileInput.files.length > 0 && latitudeInput.value && longitudeInput.value) {
-                    uploadButton.removeAttribute('disabled');
-                } else {
-                    uploadButton.setAttribute('disabled', '');
-                    logText.textContent += '動画、サムネイル、位置情報のいずれかが取得できていません。もう一度録画してください。';
-                    alert('動画、サムネイル、位置情報のいずれかが取得できていません。もう一度録画してください。');
-                }
-
-                logText.textContent += 'アップロードボタンを有効化しました。'
-
-            })
-        }
-
-        // formにファイルをセットする関数
-        function setFileInput(fileInput, file) {
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            fileInput.files = dataTransfer.files;
-        }
-
-        // canvasをBlobに変換する関数
-        function canvasToBlob(canvas, type = 'image/png') {
-            return new Promise((resolve) => {
-                canvas.toBlob((blob) => {
-                    resolve(blob);
-                }, type);
-            });
-        }
-
-        // サムネイルを生成する関数
-        async function createThumbnail(videoURL) {
-            return new Promise((resolve, reject) => {
-                const video = document.createElement('video');
-                video.src = videoURL;
-                video.addEventListener('loadeddata', () => {
-                    const context = thumbnailCanvas.getContext('2d');
-                    thumbnailCanvas.width = video.videoWidth;
-                    thumbnailCanvas.height = video.videoHeight;
-                    context.drawImage(video, 0, 0, thumbnailCanvas.width, thumbnailCanvas.height);
-                    thumbnailCanvas.toBlob(blob => resolve(blob), 'image/png');
-                });
-                video.addEventListener('error', reject);
-            });
-        }
-
-
-
-        main()
-    </script>
 {% endblock content %}
+
+<!--  -->
+
+{% block extra_script %}
+<script>
+    async function main() {
+        // 各要素を取得
+        const recordButton = document.querySelector('#recordButton')
+        const videoLive = document.querySelector('#videoLive')
+        const videoRecorded = document.querySelector('#videoRecorded')
+
+        // formの要素
+        const uploadForm = document.getElementById('uploadForm');
+        const videoFileInput = document.getElementById('videoFile');
+        const latitudeInput = document.getElementById('latitude');
+        const longitudeInput = document.getElementById('longitude');
+        const uploadButton = document.getElementById('uploadButton');
+        
+        const retakeButton = document.getElementById('retakeButton');
+
+
+        // シーン切り替え用関数
+        function showSection(sectionId) {
+            const sections = ['video-recording-section', 'video-upload-section'];
+            sections.forEach(id => {
+                document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
+            });
+        }
+
+        // カメラ映像を取得
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                width: { ideal: 1080 },
+                height: { ideal: 1080 },
+                facingMode: { exact: 'environment' },
+            },
+            audio: true,
+        }).catch(error => {
+            recordButton.setAttribute('disabled', '')
+            recordButton.innerHTML = '要件を満たす動画撮影用デバイスを取得できませんでした'
+            console.log('要件を満たす動画撮影用デバイスを取得できませんでした', error)
+        })
+
+        // カメラ映像を表示
+        videoLive.srcObject = stream
+
+        // video/mp4がサポートされていない場合はエラーメッセージを表示
+        if (!MediaRecorder.isTypeSupported('video/mp4')) {
+            console.log('video/mp4 is not supported')
+        }
+
+        // MediaRecorderを生成
+        const mediaRecorder = new MediaRecorder(stream, {
+            mimeType: 'video/mp4',
+        })
+
+        // uploadButtonを押したときの処理
+        uploadButton.addEventListener('click', () => {
+            uploadForm.submit();
+        })
+
+        // retakeButtonを押したときの処理
+        retakeButton.addEventListener('click', () => {
+            uploadButton.setAttribute('disabled', '');
+            showSection('video-recording-section');
+            videoRecorded.src = '';
+        })
+
+
+        // 録画ボタンを押したときの処理
+        recordButton.addEventListener('click', () => {
+            mediaRecorder.start()
+            recordButton.setAttribute('disabled', '')
+            recordButton.className = "w-full py-3 px-4 inline-flex justify-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-red-100 text-red-800 hover:bg-red-200 disabled:opacity-50 disabled:pointer-events-none";
+            recordButton.innerHTML = '録画中... 3秒後に停止します'
+
+            setTimeout(() => {
+                recordButton.innerHTML = '録画中... 2秒後に停止します'
+            }, 1000)
+
+            setTimeout(() => {
+                recordButton.innerHTML = '録画中... 1秒後に停止します'
+            }, 2000)
+
+            // 3秒後に録画を停止
+            setTimeout(stopRecording, 3000);
+        })
+
+
+        // 録画を停止する関数
+        function stopRecording() {
+            mediaRecorder.stop()
+            recordButton.removeAttribute('disabled')
+            recordButton.innerHTML =   `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-camera">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
+                                            <path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                                        </svg>
+                                        Record Video`
+
+            recordButton.className = "w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none";
+            showSection('video-upload-section');
+        }
+
+        function getCurrentPosition() {
+            return new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        resolve(position);
+                    },
+                    (error) => {
+                        reject(error);
+                    }
+                );
+            });
+        }
+
+        // 録画が終了したときの処理
+        mediaRecorder.addEventListener('dataavailable', async event => {
+            // 現在地を取得
+            try {
+                const position = await getCurrentPosition();
+                latitudeInput.value = position.coords.latitude;
+                longitudeInput.value = position.coords.longitude;
+            } catch (error) {
+                alert('位置情報を取得できませんでした。位置情報が必要です。');
+                console.log('位置情報を取得できませんでした。位置情報が必要です。', error);
+            }
+
+            const videoBlob = new Blob([event.data], { type: 'video/mp4' });
+            const videoURL = URL.createObjectURL(videoBlob);
+            
+            // 録画した動画を表示
+            videoRecorded.src = videoURL;
+            videoRecorded.controls = true;
+            videoRecorded.play();
+
+            
+            // Create files for form submission
+            try {
+            const videoFile = new File([videoBlob], 'recordedVideo.mp4', { type: 'video/mp4' });
+            } catch (error) {
+                console.log('ファイルを生成できませんでした。', error);
+            }
+            
+            // try-catchはブロック内で完結しているため外側の変数に入れるために再度実行．
+            // try-catchはエラーなく実行できるかの確認しかできていない．
+            // 場所（スコープ）を変えて二回同じことをしている
+            const videoFile = new File([videoBlob], 'recordedVideo.mp4', { type: 'video/mp4' });
+
+
+            // formにファイルをセット
+
+            try {
+                setFileInput(videoFileInput, videoFile);
+            } catch (error) {
+                console.log('ファイルをセットできませんでした。' + error);
+            }
+
+            // アップロードボタンを有効化
+            if (videoFileInput.files.length > 0 && latitudeInput.value && longitudeInput.value) {
+                uploadButton.removeAttribute('disabled');
+            } else {
+                uploadButton.setAttribute('disabled', '');
+                alert('動画、位置情報のいずれかが取得できていません。もう一度録画してください。');
+            }
+        })
+    }
+
+    // formにファイルをセットする関数
+    function setFileInput(fileInput, file) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+    }
+
+    main()
+</script>
+
+{% endblock extra_script %}

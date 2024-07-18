@@ -14,6 +14,7 @@ from .forms import VideoForm, VideoMemoUpdateForm
 from .models import Video
 from .utils import generate_thumbnail
 
+
 def video_map_api(request):
     videos = Video.objects.all()
     video_data = []
@@ -58,38 +59,30 @@ class UploadVideoView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["message"] = "Hello, World!"
         context["form"] = VideoForm()
         return context
 
     def post(self, request, *args, **kwargs):
-        latitude = request.POST.get("latitude")
-        longitude = request.POST.get("longitude")
-        video_file = request.FILES.get("video_file")
-        thumbnail_file = request.FILES.get("thumbnail_file")
-
-        context = self.get_context_data(**kwargs)
-
-        if not (latitude and longitude and video_file and thumbnail_file):
-            context["error"] = "位置情報、動画ファイル、サムネイルファイルの全てが必要です。"
-            return self.render_to_response(context)
-
-        video_form = VideoForm(request.POST, request.FILES)
-        if video_form.is_valid():
-            video = video_form.save(commit=False)
+        form = VideoForm(request.POST, request.FILES)
+        if form.is_valid():
+            video = form.save(commit=False)
             video.user = request.user
-            video.latitude = float(latitude)
-            video.longitude = float(longitude)
-            video.video_file = video_file
-            video.thumbnail_file = thumbnail_file
             video.save()
-            return redirect("users:profile", user_id=request.user.id)
-        else:
-            # debug
-            context["form_errors"] = video_form.errors
-            context["form"] = video_form
 
-        return self.render_to_response(context)
+            # サムネイルの生成
+            try:
+                thumbnail_content = generate_thumbnail(video.video_file.path)
+                video.thumbnail_file.save(thumbnail_content.name, thumbnail_content, save=True)
+            except Exception:
+                return HttpResponse("サムネイルの再生成に失敗しました", status=500)
+
+            # ポスト詳細へ
+            return redirect("posts:video_detail", video_id=video.id)
+
+        else:
+            context = self.get_context_data(**kwargs)
+            context["form"] = form
+            return self.render_to_response(context)
 
 
 class DeleteVideoView(LoginRequiredMixin, DeleteView):
