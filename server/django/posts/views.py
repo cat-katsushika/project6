@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from django.views.generic.edit import DeleteView
 
-from .forms import VideoForm
+from .forms import VideoForm, VideoMemoUpdateForm
 from .models import Video
 from .utils import generate_thumbnail
 
@@ -40,8 +40,14 @@ def video_map_api(request):
     return JsonResponse(video_data, safe=False)
 
 
-def video_map(request):
-    return render(request, "posts/video_map.html")
+# 下部のHomeボタンで飛ぶ先のビュー
+class PostListView(TemplateView):
+    template_name = "posts/post_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["posts"] = Video.objects.all().order_by("-uploaded_at")
+        return context
 
 
 class VideoMapView(TemplateView):
@@ -119,3 +125,21 @@ def regenerate_thumbnail(request, video_id):
         return redirect("posts:video_detail", video_id=video.id)
     except Exception:
         return HttpResponse("サムネイルの再生成に失敗しました", status=500)
+
+
+# videoのmemoを更新するAPI
+@login_required
+def update_video_memo(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
+
+    if video.user != request.user:
+        return JsonResponse({"status": "error", "message": "You are not authorized to update this memo."}, status=403)
+
+    if request.method == "POST":
+        form = VideoMemoUpdateForm(request.POST, instance=video)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"status": "success", "video_id": video_id, "memo": video.memo})
+        else:
+            return JsonResponse({"status": "error", "errors": form.errors})
+    return JsonResponse({"status": "invalid request"}, status=400)
