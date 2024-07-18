@@ -992,6 +992,10 @@ select {
   height: 7rem;
 }
 
+.h-\[70vh\] {
+  height: 70vh;
+}
+
 .h-auto {
   height: auto;
 }
@@ -1034,6 +1038,10 @@ select {
 
 .flex-shrink-0 {
   flex-shrink: 0;
+}
+
+.flex-grow {
+  flex-grow: 1;
 }
 
 .transform {

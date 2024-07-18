@@ -14,12 +14,6 @@ from .forms import VideoForm, VideoMemoUpdateForm
 from .models import Video
 from .utils import generate_thumbnail
 
-
-def video_list(request):
-    videos = Video.objects.all().order_by("-uploaded_at")
-    return render(request, "posts/video_list.html", {"videos": videos})
-
-
 def video_map_api(request):
     videos = Video.objects.all()
     video_data = []
@@ -41,12 +35,12 @@ def video_map_api(request):
 
 
 # 下部のHomeボタンで飛ぶ先のビュー
-class PostListView(TemplateView):
-    template_name = "posts/post_list.html"
+class VideoListView(TemplateView):
+    template_name = "posts/video_list.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["posts"] = Video.objects.all().order_by("-uploaded_at")
+        context["videos"] = Video.objects.all().order_by("-uploaded_at")
         return context
 
 
