@@ -21,12 +21,12 @@ jobs:
       # 依存関係のインストール
       - name: Install dependencies
         run: |
-          pip install -r docker-requirements.txt
-        working-directory: ./server/app
+          pip install -r requirements.txt
+        working-directory: ./server/django
       - name: Run Tests
         run: |
           python3 manage.py test
-        working-directory: ./server/app
+        working-directory: ./server/django
         env:
           DJANGO_SECRET_KEY: test-secret-key
           IS_DEBUG: "True"
