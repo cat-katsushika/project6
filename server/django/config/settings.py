@@ -22,6 +22,7 @@ env = environ.Env()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
+ACCOUNT_EMAIL_VERIFICATION = "none"
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -74,7 +75,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [BASE_DIR / "templates", BASE_DIR / "templates/allauth"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -142,6 +143,8 @@ USE_TZ = True
 
 STATIC_URL = env.str("DJANGO_STATIC_URL", default="static/")
 STATIC_ROOT = env.str("DJANGO_STATIC_ROOT", default=BASE_DIR / "static")
+
+STATICFILES_DIRS = [BASE_DIR / "staticfiles"]
 
 MEDIA_URL = env.str("DJANGO_MEDIA_URL", default="media/")
 MEDIA_ROOT = env.str("DJANGO_MEDIA_ROOT", default=BASE_DIR / "media")

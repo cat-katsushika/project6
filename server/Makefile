@@ -74,7 +74,9 @@ execblue:
 delete:
 	rm -rf db/
 
-
+.PHONY: css
+css:
+	npx tailwindcss -i ./django/staticfiles/css/input.css -o ./django/staticfiles/css/output.css
 
 .PHONY: prod-build
 prod-build:
@@ -97,6 +99,12 @@ proddown:
 .PHONY: prodblueup
 prodblueup:
 	docker compose -f docker-compose-prod.yml up -d --no-deps --build django-blue
+
+
+.PHONY: prodblueup-nc
+prodblueup-nc:
+	docker compose -f docker-compose-prod.yml build --no-cache django-blue
+	docker compose -f docker-compose-prod.yml up -d --no-deps django-blue
 
 .PHONY: prodbluestop
 prodbluestop:
