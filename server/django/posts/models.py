@@ -27,6 +27,7 @@ class Video(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     video_file = models.FileField(upload_to=video_upload_path)
     thumbnail_file = models.ImageField(upload_to=thumbnail_upload_path)
+    memo = models.TextField(max_length=100, blank=True)
     latitude = models.FloatField()
     longitude = models.FloatField()
     uploaded_at = models.DateTimeField(auto_now_add=True)

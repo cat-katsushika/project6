@@ -1,9 +1,11 @@
 __pycache__
 
 .venv
+.vscode
 media
 
 
 .env
 db
 
+node_modules
