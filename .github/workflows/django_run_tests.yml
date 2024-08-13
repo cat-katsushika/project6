@@ -27,13 +27,3 @@ jobs:
         run: |
           python3 manage.py test
         working-directory: ./server/django
-        env:
-          DJANGO_SECRET_KEY: test-secret-key
-          IS_DEBUG: "True"
-
-          DB_ENGINE: django.db.backends.sqlite3
-          DB_NAME: sqlite3
-          DB_USER: ""
-          DB_PASSWORD: ""
-          DB_HOST: ""
-          DB_PORT: ""
