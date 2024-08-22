@@ -33,7 +33,7 @@ AUTH_USER_MODEL = "users.User"
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-yl-j)u5a+ae_+e!-2y5u#9ttx_@rpd#j$n$)()@12-$id^7!!r"
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="default_secret_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
