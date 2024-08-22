@@ -14,6 +14,8 @@ from pathlib import Path
 
 import environ
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -155,8 +157,8 @@ MEDIA_ROOT = env.str("DJANGO_MEDIA_ROOT", default=BASE_DIR / "media")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = reverse_lazy("posts:video_list")
+LOGOUT_REDIRECT_URL = reverse_lazy("account_login")
 
 
 REGULAR_EXECUTION_TOKEN = env("REGULAR_EXECUTION_TOKEN", default="")
