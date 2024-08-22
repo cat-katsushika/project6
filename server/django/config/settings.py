@@ -33,7 +33,7 @@ AUTH_USER_MODEL = "users.User"
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-yl-j)u5a+ae_+e!-2y5u#9ttx_@rpd#j$n$)()@12-$id^7!!r"
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="default_secret_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
@@ -96,12 +96,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": env("DB_ENGINE"),
-        "NAME": env("DB_NAME"),
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST"),
-        "PORT": env("DB_PORT"),
+        "ENGINE": env("DB_ENGINE", default="django.db.backends.sqlite3"),
+        "NAME": env("DB_NAME", default=""),
+        "USER": env("DB_USER", default=""),
+        "PASSWORD": env("DB_PASSWORD", default=""),
+        "HOST": env("DB_HOST", default=""),
+        "PORT": env("DB_PORT", default=""),
         "ATOMIC_REQUESTS": True,
     }
 }
@@ -159,6 +159,6 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 
-REGULAR_EXECUTION_TOKEN = env("REGULAR_EXECUTION_TOKEN")
+REGULAR_EXECUTION_TOKEN = env("REGULAR_EXECUTION_TOKEN", default="")
 
 CSRF_TRUSTED_ORIGINS = env.list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[])
