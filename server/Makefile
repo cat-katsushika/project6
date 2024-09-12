@@ -50,15 +50,15 @@ test:
 
 .PHONY: black
 black:
-	docker compose -f docker-compose-dev.yml exec django-green black .
+	docker compose -f docker-compose-dev.yml exec django black .
 
 .PHONY: isort
 isort:
-	docker compose -f docker-compose-dev.yml exec django-green isort .
+	docker compose -f docker-compose-dev.yml exec django isort .
 
 .PHONY: flake8
 flake8:
-	docker compose -f docker-compose-dev.yml exec django-green flake8 .
+	docker compose -f docker-compose-dev.yml exec django flake8 .
 
 .PHONY: lint
 lint:
