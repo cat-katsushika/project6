@@ -1,7 +1,4 @@
 Django==5.0.4
-black==23.11.0
-flake8==6.1.0
-isort==5.12.0
 PyYAML==6.0.1
 psycopg2==2.9.6
 django-environ==0.11.2
@@ -9,3 +6,8 @@ django-allauth[socialaccount]==0.63.3 # social login
 pillow==10.3.0
 gunicorn==21.2.0
 opencv-python-headless==4.10.0.84
+
+# for development
+flake8==7.1.1
+black==24.8.0
+isort==5.13.2
